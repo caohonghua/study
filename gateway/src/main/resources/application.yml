@@ -1,0 +1,65 @@
+spring:
+  cloud:
+    gateway:
+      enabled: true
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 5s
+      routes:
+        - id: before_route
+          uri: https://www.taobao.com
+          predicates:
+            - Before=2021-11-15T11:46:10.696514+08:00[Asia/Shanghai]
+          filters:
+            - AddRequestHeader=X-Request-red, blue
+        - id: after_route
+          uri: http://www.baidu.com
+          predicates:
+            - After=2021-11-20T21:45:16.001133+08:00[Asia/Shanghai]
+          filters:
+            - AddRequestParameter=red, blue
+        - id: between_route
+          uri: http://www.huawei.com
+          predicates:
+            - Between=2021-11-18T21:47:10.696514+08:00[Asia/Shanghai], 2021-11-20T21:43:16.001133+08:00[Asia/Shanghai]
+          filters:
+            - AddResponseHeader=X-Response-Red, Blue
+        - id: cookie_route
+          uri: http://example.org
+          predicates:
+            - Cookie=chocolate, ch.p
+          metadata:
+            connect-timeout: 200
+            response-timeout: 200
+        - id: header_route
+          uri: http://example.org
+          predicates:
+            - Header=X-Request-Id, \d+
+        - id: host_route
+          uri: http://example.org
+          predicates:
+            - Host=**.somehost.org,**.anotherhost.org
+        - id: method_route
+          uri: http://example.org
+          predicates:
+            - Method=GET,POST
+        - id: path_route
+          uri: http://example.org
+          predicates:
+            - Path=/red/{segment},/blue/{segment}
+        - id: query_route
+          uri: http://example.org
+          predicates:
+            - Query=green
+        - id: remote_route
+          uri: http://example.org
+          predicates:
+            - RemoteAddr=192.168.1.1/24
+        - id: weight_high
+          uri: http://weight-high.org
+          predicates:
+            - Weight=group1, 8
+        - id: weight_low
+          uri: http://weight-low.org
+          predicates:
+            - Weight=group1, 2
